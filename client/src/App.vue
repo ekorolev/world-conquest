@@ -9,6 +9,10 @@
 
 <script>
 	require('./phaser.min.js')
+	var socket = new WebSocket("ws://localhost:9001/ws");
+	socket.onopen = function () {
+		
+	}
 
 	var config = {
 	    type: Phaser.AUTO,
