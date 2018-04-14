@@ -54,7 +54,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Алина&Женя',
+      title: 'AMCP Shooter',
       template: 'src/index.html'
     })
   ]
