@@ -42,13 +42,15 @@ func wsHandler(g *Game) func(http.ResponseWriter, *http.Request) {
 
 func main() {
 	game := NewGame()
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../client/dist/index.html")
-	})
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, fmt.Sprintf("../client/dist/%s", r.URL.Path[8:]))
 	})
+	http.HandleFunc("/assets/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, fmt.Sprintf("../client/assets/%s", r.URL.Path[8:]))
+	})
 	http.HandleFunc("/ws", wsHandler(game))
+
+	go game.TickTack()
 
 	if err := http.ListenAndServe(":9001", nil); err != nil {
 		log.Fatal("ListenAndServe:", err.Error())

@@ -8,13 +8,13 @@
     <div v-else>
     	Залогинен под именем {{ name }}
     </div>
+    <div>{{ gameState }}</div>
     <div id="game"></div>
     <div>
     	<ul>
     		<li v-for="message in messages">{{ message }}</li>
     	</ul>
     </div>
-    <console-component></console-component>
   </div>
 </template>
 
@@ -34,17 +34,23 @@
 	}
 
 	var game = new Phaser.Game(config);
+  var Soldier = null
 
 	function preload () {
+    this.load.image('soldier', '/assets/soldier_main.gif')
 	}
 
 	function create () {
+    Soldier = this.add.image(100, 100, 'soldier')
+    Soldier.setDisplaySize( 64, 64 )
+    Soldier.setRotation( 30 )
 	}
 
 	function update () {
+    if ( Phaser.Input.Keyboard.JustDown(this.cursors.left) ) {
+      Soldier.setX(Soldier.X - 20)
+    }
 	}
-
-	import ConsoleComponent from './ConsoleComponent.vue'
 
   export default {
     data () {
@@ -52,7 +58,8 @@
     		name: null,
     		auth: false,
     		socket: null,
-    		messages: []
+    		messages: [],
+        gameState: null
     	}
     },
     methods: {
@@ -70,12 +77,21 @@
     		}
 
     		if ( self.auth ) {
-    			self.messages.push(evt.data)
+
+          if ( evt.data.indexOf('State:')+1 ) {
+            let array = evt.data.split('')
+            array.splice(0, 6)
+            let stateJSON = array.join('')
+            self.gameState = JSON.parse(stateJSON)
+            return
+          }
+
+          if ( evt.data.indexOf('NewPlayer:')+1 ) {
+            self.messages.push(evt.data)
+            return
+          }
     		}
     	}
-    },
-    components: {
-    	ConsoleComponent
     }
   }
 </script>
