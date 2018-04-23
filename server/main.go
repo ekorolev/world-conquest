@@ -130,10 +130,10 @@ func main() {
 	}
 
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, fmt.Sprintf("client/dist/%s", r.URL.Path[8:]))
+		http.ServeFile(w, r, fmt.Sprintf("client/%s", r.URL.Path[8:]))
 	})
 	http.HandleFunc("/assets/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, fmt.Sprintf("client/assets/%s", r.URL.Path[8:]))
+		http.ServeFile(w, r, fmt.Sprintf("../client/assets/%s", r.URL.Path[8:]))
 	})
 	http.HandleFunc("/ws", wsHandler(game))
 	http.HandleFunc("/statistic-ws", wsStatisticHandler(game))
