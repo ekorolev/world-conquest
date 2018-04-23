@@ -26,9 +26,12 @@ func wsHandler(g *Game) func(http.ResponseWriter, *http.Request) {
 			messageType, message, err := ws.ReadMessage()
 			parts := strings.Split(string(message), ":")
 			if messageType == websocket.TextMessage && parts[0] == "AuthName" {
-				g.NewPlayer(parts[1], ws)
+				p := g.NewPlayer(parts[1], ws)
 				ws.WriteMessage(websocket.TextMessage, []byte("Auth:OK"))
-				g.SendAll(fmt.Sprintf("NewPlayer:%s", parts[1]))
+				g.SendPlayerToAll(p)
+				p.SendMap(g.Map)
+				p.SendPlayers(g.Players)
+				p.SendAboutInfo()
 				break
 			} else {
 				err = ws.WriteMessage(websocket.TextMessage, []byte("Error:You must authenticate in game"))
@@ -49,8 +52,6 @@ func main() {
 		http.ServeFile(w, r, fmt.Sprintf("../client/assets/%s", r.URL.Path[8:]))
 	})
 	http.HandleFunc("/ws", wsHandler(game))
-
-	go game.TickTack()
 
 	if err := http.ListenAndServe(":9001", nil); err != nil {
 		log.Fatal("ListenAndServe:", err.Error())
