@@ -142,6 +142,7 @@ type Game struct {
 	TickN   int64              `json:"tickN"`
 	Players map[string]*Player `json:"players"`
 	Map     [][]int
+	Stats   []float64
 }
 
 // Initialize new game and return pointer to game object
@@ -215,6 +216,14 @@ func (g *Game) SendAll(message string) {
 			g.BrokenPlayer(key)
 		}
 	}
+}
+func (g *Game) SetStats(m []float64) {
+	g.Stats = m
+}
+func (g *Game) SendStats() {
+	statsmsg, _ := json.Marshal(g.Stats)
+	msg := fmt.Sprintf("Stats:%s", statsmsg)
+	g.SendAll(msg)
 }
 
 func (g *Game) SendPlayerToAll(p *Player) {
